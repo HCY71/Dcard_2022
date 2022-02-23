@@ -1,4 +1,5 @@
 import './App.css';
+import {useState} from 'react';
 import {
   BrowserRouter as Router,
   Routes,
@@ -9,6 +10,7 @@ import {
 import Repo from './pages/Repo';
 import Repos from './pages/Repos';
 import NotFound from './pages/NotFound';
+import Search from './pages/Search';
 import Navbar from './components/Navbar';
 import styled, { ThemeProvider } from 'styled-components';
 import theme from './css/theme'
@@ -28,15 +30,22 @@ const StyledDiv = styled.div`
 `
 
 function App() {
+  const [isDarkTheme, setIsDarkTheme] = useState(true);
+
+  const handleTheme = ()=>{
+    setIsDarkTheme(!isDarkTheme);
+    console.log(isDarkTheme);
+  }
   return (
-    <ThemeProvider theme={theme.default}>
+    <ThemeProvider theme={isDarkTheme? theme.default:theme.light}>
       <Router>
         <StyledDiv className="App">
-          <Navbar/>
+          <Navbar handleTheme={handleTheme}/>
           <Routes>
             <Route path="/" element={<Navigate to="/users/HCY71/repos" />} />
             <Route path="/users/:username/repos" element={<Repos />} />
             <Route path="/users/:username/repos/:repo" element={<Repo />} />
+            <Route path="/search" element={<Search />} />
             <Route path="/*" element={<NotFound />} />
           </Routes>
         </StyledDiv>

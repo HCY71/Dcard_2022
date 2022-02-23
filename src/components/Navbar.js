@@ -1,13 +1,15 @@
 import styled from 'styled-components';
+import { useState } from 'react';
 import logo from '../assets/logo.svg'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass, faMoon } from '@fortawesome/free-solid-svg-icons'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import RWD from '../css/rwd';
 import Global from '../css/global';
 
+
 const StyledDiv = styled.div`
-    background-color: ${props=>props.theme.background};
+    background-color: ${props => props.theme.background};
     width: 100%;
     display: grid;
     margin-left: auto;
@@ -26,7 +28,7 @@ const StyledDiv = styled.div`
         display: none;
     }
     .search{
-        background-color: ${props=>props.theme.front};
+        background-color: ${props => props.theme.front};
         padding: 5px 10px;
         border-radius: 10px;
         grid-template-columns: auto auto;
@@ -35,26 +37,29 @@ const StyledDiv = styled.div`
         .search-input{
             width: 55vw;
             border: none;
+            background-color: ${props => props.theme.front};
+            color: ${props => props.theme.main};
         }
         .search-input:focus{
             outline: none;
         }
         .search-icon{
-            color: ${props=>props.theme.icon};
+            color: ${props => props.theme.icon};
         }
     }
     .mode{
         .mode-icon{
             font-size: 20px;
-            color: ${props=>props.theme.icon};
+            color: ${props => props.theme.icon};
         }
     }
     .link{
         justify-self: end;
         padding-left: 10px;
-        border-left: solid ${props=>props.theme.border} 2px;
+        border-left: solid ${props => props.theme.border} 2px;
         border-radius: 2px;
         .link-logo{
+            ${props=>props.theme.isDark? 'filter: invert(1);':''}
             width: 30px;
         }
     }
@@ -80,7 +85,7 @@ const StyledDiv = styled.div`
             align-content: center;
             .brand-link{
                 font-weight: bold;
-                color: ${props=>props.theme.icon};
+                color: ${props => props.theme.icon};
                 font-size: 20px;
             }
         }
@@ -102,8 +107,27 @@ const StyledDiv = styled.div`
     }
 `
 
-const Navbar = () => {
-    return ( 
+const Navbar = ({handleTheme}) => {
+
+    const [keyword, setKeyword] = useState('');
+
+    let navigate = useNavigate();
+
+    const handleSearch = async (keyword) => {
+        if (keyword) {
+            navigate({ pathname: "/search", search: "?keyword=" + keyword });
+            setKeyword('');
+        } else {
+            alert('請輸入關鍵字！');
+        }
+    }
+
+    const handleEnterPress = (e) => {
+        if (e.key === 'Enter') {
+            handleSearch(keyword);
+        }
+    }
+    return (
         <StyledDiv id="navbar">
             <div className="brand">
                 <Link to='/' className='brand-link'>
@@ -111,21 +135,21 @@ const Navbar = () => {
                 </Link>
             </div>
             <div className="search">
-                <input type="text" className="search-input" placeholder='搜尋...'></input>
-                <div className="search-button">
-                    <FontAwesomeIcon icon={faMagnifyingGlass} className="search-icon"/>
+                <input type="text" className="search-input" placeholder='搜尋...' onChange={(e) => setKeyword(e.target.value)} onKeyPress={handleEnterPress} value={keyword}></input>
+                <div className="search-button" onClick={() => handleSearch(keyword)} >
+                    <FontAwesomeIcon icon={faMagnifyingGlass} className="search-icon" />
                 </div>
             </div>
             <div className="mode">
-                    <div className="mode-button">
-                        <FontAwesomeIcon icon={faMoon} className="mode-icon"/>
-                    </div>
+                <div className="mode-button" onClick={handleTheme}>
+                    <FontAwesomeIcon icon={faMoon} className="mode-icon" />
+                </div>
             </div>
             <a className='link' href='https://github.com/HCY71/Dcard_2022' target='_blank' rel="noreferrer">
                 <img src={logo} alt="" className="link-logo" />
             </a>
         </StyledDiv>
-     );
+    );
 }
- 
+
 export default Navbar;

@@ -9,7 +9,7 @@ import { faLink, faStar } from '@fortawesome/free-solid-svg-icons'
 import RWD from '../css/rwd';
 import Global from '../css/global';
 
-const githubToken = "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";
+const githubToken = "";
 
 const StyledDiv = styled.div`
     background-color: ${props => props.theme.front};
@@ -23,14 +23,15 @@ const StyledDiv = styled.div`
         grid-template-columns: auto auto;
         grid-template-rows: repeat(4, auto);
         grid-row-gap: 12px;
+        grid-column-gap: 12px;
         .header-img{
             border-radius: 50%;
-            width: 50vw;
+            width: 40vw;
             grid-row: 1 / span 1;
         }
         .header-name{
             grid-column: 2 / span 1;
-            font-size: 28px;
+            font-size: 5vw;
             padding: 10px;
             align-self: center;
             font-weight: bold;
@@ -41,6 +42,7 @@ const StyledDiv = styled.div`
             grid-column: 1 / span 2;
             font-size: 16px;
             text-align: left;
+            color: ${props => props.theme.second};
         }
         .header-url{
             font-size: 16px;
@@ -103,6 +105,7 @@ const StyledDiv = styled.div`
             grid-row-gap: 0px;
             .header-name{
                 padding: 0;
+                font-size: 24px;
             }
             .header-img{
                 width: 250px;
@@ -208,7 +211,7 @@ const Repos = () => {
         try {
             const res = await instance.get(`users/${username}`, {
                 headers: {
-                    "Authorization": "token " + githubToken
+                    "Authorization": `${githubToken ? "token " + githubToken: ''}`
                 }
             });
             setUser(res.data);
@@ -225,7 +228,7 @@ const Repos = () => {
         try {
             const res = await instance.get(`users/${username}/repos`, {
                 headers: {
-                    "Authorization": "token " + githubToken
+                    "Authorization": `${githubToken ? "token " + githubToken: ''}`
                 }
             });
             // console.log(res.data[0])
