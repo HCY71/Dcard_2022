@@ -48,6 +48,7 @@ const StyledDiv = styled.div`
         }
     }
     .mode{
+        cursor: pointer;
         .mode-icon{
             font-size: 20px;
             color: ${props => props.theme.icon};

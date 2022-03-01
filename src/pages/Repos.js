@@ -1,15 +1,16 @@
-import instance from "../api/axios";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from "react-router-dom";
-import NotFound from "./NotFound";
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLink, faStar } from '@fortawesome/free-solid-svg-icons'
+import Loading from '../components/Loading';
+import Error from '../components/Error'
+import Error403 from '../components/Error403';
 
 import RWD from '../css/rwd';
 import Global from '../css/global';
 
-const githubToken = "";
+import { useGetRepos, useGetUser } from '../api/get'
 
 const StyledDiv = styled.div`
     background-color: ${props => props.theme.front};
@@ -74,6 +75,14 @@ const StyledDiv = styled.div`
             grid-template-columns: minmax(0, 1fr);
             justify-items: start;
             grid-row-gap: 10px;
+            &.no-repo{
+                color: ${props => props.theme.main};
+                font-size: 20px;
+                font-weight: bold;
+                grid-column: 1 / span 3;
+                padding: 40px;
+                justify-items: center;
+            }
             .repos-item-link{
                 width: 80vw;
                 font-size: 20px;
@@ -203,80 +212,104 @@ const StyledDiv = styled.div`
 
 const Repos = () => {
     let { username } = useParams();
-    const [user, setUser] = useState(null);
-    const [repos, setRepos] = useState([]);
-    const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
+    const [page, setPage] = useState(1);
+    const [isTriggered, setIsTriggered] = useState(false);
 
-    const getUser = async (username) => {
-        try {
-            const res = await instance.get(`users/${username}`, {
-                headers: {
-                    "Authorization": `${githubToken ? "token " + githubToken: ''}`
-                }
-            });
-            setUser(res.data);
-        }
-        catch (e) {
-            const status = e.response.status;
-            // if(status === 404){
-            //     window.location = '/';
-            // }
-            setError(e.message);
-        }
-    }
-    const getRepos = async (username) => {
-        try {
-            const res = await instance.get(`users/${username}/repos`, {
-                headers: {
-                    "Authorization": `${githubToken ? "token " + githubToken: ''}`
-                }
-            });
-            // console.log(res.data[0])
-            setRepos(res.data);
-        }
-        catch (e) {
-            const status = e.response.status;
-            // if(status === 404){
-            //     window.location = '/';
-            // }
-            setError(e.message);
+    const scrollEl = useRef(null);
+
+    const { user, errorUser } = useGetUser(username);
+    const { fetching, error, repos, dataEnd } = useGetRepos(username, page);
+
+
+    const detectFetch = () => {
+        if (scrollEl.current.offsetHeight + scrollEl.current.scrollTop >= scrollEl.current.scrollHeight) {
+            setIsTriggered(true);
         }
     }
 
     useEffect(() => {
-        getUser(username);
-        getRepos(username);
-        // howtographql
+        setPage(1);
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 1000)
     }, [])
 
+    useEffect(() => {
+        if (scrollEl.current) {
+            scrollEl.current.addEventListener('scroll', detectFetch);
+        };
+    }, [isLoading]);
+
+    useEffect(() => {
+        if (isTriggered && !dataEnd && !fetching) {
+            setPage(page + 1);
+        }
+        if (isTriggered) {
+            setTimeout(() => {
+                setIsTriggered(false);
+            }, 500)
+        }
+    }, [isTriggered])
+
+    if (error || errorUser) {
+        if (errorUser && errorUser.status === 403) {
+            return <Error403 />
+        }
+        else if (error && error.status === 403) {
+            return <Error403 />
+
+        }
+        else if (errorUser && errorUser.status === 404) {
+            return <Error code={404} msg1={"搜尋User時出錯了。"} msg2={"搜尋的User不存在！"} />
+        }
+        else if (errorUser) {
+            return <Error code={errorUser.status} msg1={"搜尋User時出錯了。"} msg2={errorUser.data.message} />
+        }
+        else if (error) {
+            return <Error code={error.status} msg1={"取得Repo資料時出錯了。"} msg2={error.data.message} />
+        }
+    }
     return (
-        <StyledDiv className="repos-page">
-            {user ? <div className="header">
-                <img src={user.avatar_url} alt="" className="header-img" />
-                <div className="header-name">{user.name ? user.name : user.login}</div>
-                {/* <div className="header-login">{user.login}</div> */}
-                <div className="header-des">{user.bio}</div>
-                <a className="header-url" href={user.html_url} rel="noreferrer" target='_blank'>
-                    <FontAwesomeIcon icon={faLink} className='header-url-icon' />
-                    {user.html_url}
-                </a>
-                <hr />
-            </div> : ''}
-            {error ? <NotFound /> : <div className="repos">{repos.map(r =>
-                <Link to={r.name} className="repos-item" key={r.id}>
-                    <div to={r.name} className="repos-item-link">
-                        {r.name}
-                    </div>
-                    <div className="repos-item-des">
-                        {r.description}
-                    </div>
-                    <div className="repos-item-star">
-                        <FontAwesomeIcon icon={faStar} className="repos-item-star-icon"></FontAwesomeIcon>
-                        {r.stargazers_count}
-                    </div>
-                </Link>
-            )}</div>}
-        </StyledDiv>
+        <>
+            {isLoading ? <Loading /> :
+                user ?
+                    <StyledDiv className="repos-page" ref={scrollEl}>
+                        <div className="header">
+                            <img src={user.avatar_url} alt="" className="header-img" />
+                            <div className="header-name">{user.name ? user.name : user.login}</div>
+                            <div className="header-des">{user.bio}</div>
+                            <a className="header-url" href={user.html_url} rel="noreferrer" target='_blank'>
+                                <FontAwesomeIcon icon={faLink} className='header-url-icon' />
+                                {user.html_url}
+                            </a>
+                            <hr />
+                        </div>
+                        <div className="repos" >
+                            {repos.length === 0 && !fetching ?
+                                <div className="repos-item no-repo">
+                                    No Repo available here!
+                                </div>
+                                : repos.map(r =>
+                                    <Link to={r.name} className="repos-item" key={r.id}>
+                                        <div to={r.name} className="repos-item-link">
+                                            {r.name}
+                                        </div>
+                                        <div className="repos-item-des">
+                                            {r.description}
+                                        </div>
+                                        <div className="repos-item-star">
+                                            <FontAwesomeIcon icon={faStar} className="repos-item-star-icon"></FontAwesomeIcon>
+                                            {r.stargazers_count}
+                                        </div>
+                                    </Link>
+                                )}
+                        </div>
+                        <Loading hide={!fetching || dataEnd} />
+                    </StyledDiv>
+                    : ''
+            }
+        </>
     );
 }
 

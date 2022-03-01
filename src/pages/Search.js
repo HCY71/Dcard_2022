@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react';
-import instance from "../api/axios";
+import { useState, useEffect, useRef } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import Global from '../css/global';
 import RWD from '../css/rwd';
+import Loading from '../components/Loading';
+import Error from '../components/Error';
+import Error403 from '../components/Error403';
 
+import { useGetSearch } from '../api/get';
 
-const githubToken = "";
 
 const StyledDiv = styled.div`
     width: 100%;
@@ -38,7 +40,7 @@ const StyledDiv = styled.div`
             .result-img{
                 width: 100px;
                 border-radius: 50%;
-                border: solid 2px ${props=>props.theme.border};
+                border: solid 2px ${props => props.theme.border};
             }
             .result-name{
                 font-size: 20px;
@@ -88,55 +90,78 @@ const StyledDiv = styled.div`
 `
 const Search = () => {
     const [searchParams] = useSearchParams();
-    const [searchResult, setSearchResult] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [page, setPage] = useState(1);
+    const [isTriggered, setIsTriggered] = useState(false)
 
-    const getData = async () => {
-        try {
-            const res = await instance.get(`search/users`, {
-                headers: {
-                    "Authorization": `${githubToken ? "token " + githubToken: ''}`
-                },
-                params: {
-                    q: searchParams.get('keyword') + 'in:fullname&type=Users',
-                    per_page: 10
-                }
-            });
-            setSearchResult(res.data.items);
-        }
-        catch (e) {
-            const status = e.response.status;
-            // if(status === 404){
-            //     window.location = '/';
-            // }
-            // setError(e.message);
+    const scrollEl = useRef(null);
+
+    const { fetching, error, searchResult, dataEnd } = useGetSearch(searchParams, page);
+
+    const detectFetch = () => {
+        if (scrollEl.current.offsetHeight + scrollEl.current.scrollTop >= scrollEl.current.scrollHeight) {
+            setIsTriggered(true);
         }
     }
+    useEffect(() => {
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 1000)
+    }, [])
 
     useEffect(() => {
-        getData();
+        if (scrollEl.current) {
+            scrollEl.current.addEventListener('scroll', detectFetch);
+        };
+    }, [isLoading]);
+
+    //reset page when new search happened
+    useEffect(() => {
+        setPage(1);
+        setIsTriggered(false);
     }, [searchParams])
 
+    useEffect(() => {
+        if (isTriggered && !dataEnd && !fetching) {
+            setPage(page + 1);
+        }
+        if (isTriggered) {
+            setTimeout(() => {
+                setIsTriggered(false);
+            }, 500)
+        }
+
+    }, [isTriggered])
+
+    if (error) {
+        if (error.status === 403) {
+            return <Error403 />
+        }
+        return <Error code={error.status} msg1={"搜尋時出錯了。"} msg2={error.data.message} />
+    }
     return (
-        <StyledDiv className="search">
-            {searchResult ? <div className="results">
-                <div className="results-title">
-                    關鍵字： {searchParams.get('keyword')} 的搜尋結果
-                </div>
-                {searchResult.length !== 0 ? searchResult.map(r =>
-                    <Link className="result" to={"/users/" + r.login + "/repos"} key={r.id}>
-                        <img className="result-img" src={r.avatar_url} />
-                        <div className="result-name">{r.login}</div>
-                        <div className="result-type">{r.type}</div>
-                        {/* <a className="result-url" href={r.html_url} target="_black" rel="noreferrer">
-                        <FontAwesomeIcon icon={faLink}/>
-                    </a> */}
-                    </Link>
-                ) : <div className="result">
-                    <div className="result-name result-none">什麼都沒找到！</div>
-                    <div className="result-name result-none">換換關鍵字吧</div>
-                </div>}
-            </div> : ''}
-        </StyledDiv>
+        <>
+            {isLoading ? <Loading /> :
+                <StyledDiv className="search" ref={scrollEl}>
+                    {searchResult ?
+                        <div className="results">
+                            <div className="results-title">
+                                關鍵字： {searchParams.get('keyword')} 的搜尋結果
+                            </div>
+                            {searchResult.length !== 0 || fetching ? searchResult.map(r =>
+                                <Link className="result" to={"/users/" + r.login + "/repos"} key={r.id}>
+                                    <img className="result-img" src={r.avatar_url} alt='' />
+                                    <div className="result-name">{r.login}</div>
+                                    <div className="result-type">{r.type}</div>
+                                </Link>
+                            ) : <div className="result">
+                                <div className="result-name result-none">什麼都沒找到！</div>
+                                <div className="result-name result-none">換換關鍵字吧</div>
+                            </div>}
+                            <Loading hide={!fetching || dataEnd} />
+                        </div> : ''}
+                </StyledDiv>}
+        </>
     );
 }
 

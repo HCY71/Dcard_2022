@@ -1,15 +1,17 @@
-import instance from "../api/axios";
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from "react-router-dom";
-import NotFound from "./NotFound";
+import NotFound from "../components/NotFound";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLink, faStar } from '@fortawesome/free-solid-svg-icons'
 import styled from 'styled-components';
 import RWD from '../css/rwd'
 import Global from '../css/global'
 import Button from '../components/Button';
+import Loading from '../components/Loading';
+import Error from '../components/Error';
+import Error403 from '../components/Error403';
 
-const githubToken = "";
+import { useGetRepo } from "../api/get";
 
 const StyledDiv = styled.div`
     background-color: ${props => props.theme.front};
@@ -38,8 +40,8 @@ const StyledDiv = styled.div`
     }
     .repo-lan{
         grid-column: 1 / span 1;
-        background-color: ${props=>props.theme.main};
-        color:  ${props=>props.theme.front};
+        background-color: ${props => props.theme.main};
+        color:  ${props => props.theme.front};
         font-weight: bold;
         padding: 5px 10px;
         border-radius: 50px;
@@ -105,56 +107,52 @@ const StyleButton = styled(Button)`
 `
 const Repo = () => {
     let { username, repo } = useParams();
-    const [error, setError] = useState('');
-    const [data, setData] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
+
+    const { data, error } = useGetRepo(username, repo);
 
     let navigate = useNavigate();
 
-    const getData = async (username, repo) => {
-        try {
-            const res = await instance.get(`/repos/${username}/${repo}`, {
-                headers: {
-                    "Authorization": `${githubToken ? "token " + githubToken: ''}`
-                }
-            });
-            setData(res.data);
-        }
-        catch (e) {
-            const status = e.response.status;
-            // if(status === 404){
-            //     window.location = '/';
-            // }
-            setError(e.message);
-        }
-    }
     useEffect(() => {
-        getData(username, repo);
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 1000);
     }, [])
+
+    if (error) {
+        if(error.status === 403){
+            return <Error403/>
+        }
+        return <Error code={error.status} msg1={"取得Repo資料時出錯了。"} msg2={error.data.message} />
+    }
+
     return (
         <>
-            {(error || !data) ? <NotFound /> :
-                <StyledDiv className="repo">
-                    <div className="repo-name">
-                        <Link to={'/users/' + username + '/repos'} className='repo-name-user'>
-                            {data.full_name.slice(0, data.full_name.indexOf('/')) + ' '}
-                        </Link>
-                         / {repo}
-                    </div>
-                    <div className="repo-lan">
-                        {data.language ? data.language:'--'}
-                    </div>
-                    <div className="repo-star">
-                        <FontAwesomeIcon className="repo-star-icon" icon={faStar}/>
-                        {data.stargazers_count}
-                    </div>
-                    <div className="repo-des">
-                        {data.description}
-                    </div>
-                    <a className="repo-url" href={data.html_url} target="_blank" rel="noreferrer">
-                        <FontAwesomeIcon className="repo-url-icon" icon={faLink}/>
-                    </a>
-                    <StyleButton text={'Go Back'} onClick={()=>navigate(-1)}/>
-                </StyledDiv>
+            {isLoading ? <Loading /> :
+                data ?
+                    <StyledDiv className="repo">
+                        <div className="repo-name">
+                            <Link to={'/users/' + username + '/repos'} className='repo-name-user'>
+                                {data.full_name.slice(0, data.full_name.indexOf('/')) + ' '}
+                            </Link>
+                            / {repo}
+                        </div>
+                        <div className="repo-lan">
+                            {data.language ? data.language : '--'}
+                        </div>
+                        <div className="repo-star">
+                            <FontAwesomeIcon className="repo-star-icon" icon={faStar} />
+                            {data.stargazers_count}
+                        </div>
+                        <div className="repo-des">
+                            {data.description}
+                        </div>
+                        <a className="repo-url" href={data.html_url} target="_blank" rel="noreferrer">
+                            <FontAwesomeIcon className="repo-url-icon" icon={faLink} />
+                        </a>
+                        <StyleButton text={'Go Back'} onClick={() => navigate(-1)} />
+                    </StyledDiv>
+                    : <NotFound />
             }
         </>
     );
