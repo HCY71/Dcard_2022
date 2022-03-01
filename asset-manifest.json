@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/RepoFinder/static/css/main.6f79919d.css",
-    "main.js": "/RepoFinder/static/js/main.92aa2826.js",
+    "main.js": "/RepoFinder/static/js/main.552d04ca.js",
     "static/media/logo.svg": "/RepoFinder/static/media/logo.255db585f8a0eb28a1e4deb91bde207d.svg",
     "index.html": "/RepoFinder/index.html",
     "main.6f79919d.css.map": "/RepoFinder/static/css/main.6f79919d.css.map",
-    "main.92aa2826.js.map": "/RepoFinder/static/js/main.92aa2826.js.map"
+    "main.552d04ca.js.map": "/RepoFinder/static/js/main.552d04ca.js.map"
   },
   "entrypoints": [
     "static/css/main.6f79919d.css",
-    "static/js/main.92aa2826.js"
+    "static/js/main.552d04ca.js"
   ]
 }
