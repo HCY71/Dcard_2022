@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 
+//Styling
 const StyledDiv = styled.div`
     color: ${props=>props.theme.main};
     font-weight: bold;

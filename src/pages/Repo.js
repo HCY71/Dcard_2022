@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from "react-router-dom";
-import NotFound from "../components/NotFound";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLink, faStar } from '@fortawesome/free-solid-svg-icons'
 import styled from 'styled-components';
@@ -13,6 +12,7 @@ import Error403 from '../components/Error403';
 
 import { useGetRepo } from "../api/get";
 
+//Styling
 const StyledDiv = styled.div`
     background-color: ${props => props.theme.front};
     margin: 10px;
@@ -113,12 +113,14 @@ const Repo = () => {
 
     let navigate = useNavigate();
 
+    //When the ComponentDidMounted + 1s, set isLoading to false
     useEffect(() => {
         setTimeout(() => {
             setIsLoading(false);
         }, 1000);
     }, [])
 
+    //Error handling
     if (error) {
         if(error.status === 403){
             return <Error403/>
@@ -128,7 +130,9 @@ const Repo = () => {
 
     return (
         <>
+            {/* When loading, show Loading components*/}
             {isLoading ? <Loading /> :
+                // Check is data has been loaded
                 data ?
                     <StyledDiv className="repo">
                         <div className="repo-name">
@@ -152,7 +156,7 @@ const Repo = () => {
                         </a>
                         <StyleButton text={'Go Back'} onClick={() => navigate(-1)} />
                     </StyledDiv>
-                    : <NotFound />
+                    : ''
             }
         </>
     );

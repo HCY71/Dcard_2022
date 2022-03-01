@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import Loading from '../components/Loading';
 
+//Styling
 const StyledDiv = styled.div` 
     width: 100vw;
     height: 100vh;

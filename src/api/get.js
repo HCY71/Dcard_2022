@@ -1,14 +1,17 @@
 import instance from "./axios";
 import { useEffect, useState } from "react";
 
+//Access the githubToken from .env
 const githubToken = '' || process.env.REACT_APP_githubToken;
 
+//Customize react hooks
 const useGetSearch = (searchParams, page) => {
     const [fetching, setFetching] = useState(false);
     const [error, setError] = useState(null);
     const [searchResult, setSearchResult] = useState([]);
     const [dataEnd, setDataEnd] = useState(false);
 
+    //Reset when searchResult changes.
     useEffect(() => {
         setSearchResult([])
         setDataEnd(false)
@@ -46,7 +49,7 @@ const useGetSearch = (searchParams, page) => {
 
                 setFetching(false);
 
-                //check data end
+                //check if end of data
                 if (searchResult.length === res.data.total_count || res.data.total_count === 0) {
                     setDataEnd(true)
                 }
@@ -103,7 +106,7 @@ const useGetRepos = (username, page) => {
 
                 setFetching(false);
 
-                //check data end
+                //check if end of data
                 if (repos.length === res.data.total_count || res.data.total_count === 0) {
                     setDataEnd(true)
                 }

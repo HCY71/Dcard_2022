@@ -4,7 +4,7 @@ In this project, you can:
 
 1. Find repos of specific user.
 1. Get basic data of the repo.
-1. Search users with user name.
+1. Search users with username.
 
 ## Features
 
@@ -43,6 +43,12 @@ Show details.
 
 * Others\
 Return Error with the status code and the error message.
+
+### Deployed on Github Page
+
+This project has deployed on Github Page.
+
+[Link](https://hcy71.github.io/RepoFinder)
 
 ## Getting Started
 

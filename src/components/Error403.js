@@ -1,11 +1,14 @@
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import RWD from '../css/rwd';
 import Global from '../css/global';
+import Loading from "./Loading";
 
+//Styling
 const StyledDiv = styled.div`
-    color: ${props=>props.theme.main};
+    color: ${props => props.theme.main};
     width: 90vw;
-    border: solid 1px ${props=>props.theme.border};
+    border: solid 1px ${props => props.theme.border};
     border-radius: 10px;
     padding: 20px 40px;
     margin-top: 30px;
@@ -32,16 +35,30 @@ const StyledDiv = styled.div`
 `
 
 const Error_403 = () => {
-    return ( 
-        <StyledDiv className="error-403">
-            <div className="title">403</div>
-            <div className="subtitle">Unauthenticated clients can make 60 requests per hour.</div>
-            <a href="https://docs.github.com/en/rest/guides/getting-started-with-the-rest-api#authentication" target="_blank" rel="noreferrer">See Github Doc</a>
-            <div className="des">You need to add your GitHub Token as .env file to continue!</div>
-            <a href="https://github.com/HCY71/RepoFinder#getting-started-with-create-react-app" target="_blank" rel="noreferrer">See README</a>
-        </StyledDiv>
+    const [isLoading, setIsLoading] = useState(true);
 
-     );
+    //When the ComponentDidMounted + 1s, set isLoading to false
+    useEffect(() => {
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 1000);
+    }, [])
+
+    return (
+        <>
+            {/* When loading, show Loading components*/}
+            {isLoading ? <Loading /> :
+                <StyledDiv className="error-403">
+                    <div className="title">403</div>
+                    <div className="subtitle">Unauthenticated clients can make 60 requests per hour.</div>
+                    <a href="https://docs.github.com/en/rest/guides/getting-started-with-the-rest-api#authentication" target="_blank" rel="noreferrer">See Github Doc</a>
+                    <div className="des">You need to add your GitHub Token as .env file to continue!</div>
+                    <a href="https://github.com/HCY71/RepoFinder#getting-started-with-create-react-app" target="_blank" rel="noreferrer">See README</a>
+                </StyledDiv>
+            }
+        </>
+
+    );
 }
- 
+
 export default Error_403;

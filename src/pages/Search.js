@@ -9,7 +9,7 @@ import Error403 from '../components/Error403';
 
 import { useGetSearch } from '../api/get';
 
-
+//Styling
 const StyledDiv = styled.div`
     width: 100%;
     padding: 30px 10px;
@@ -98,41 +98,47 @@ const Search = () => {
 
     const { fetching, error, searchResult, dataEnd } = useGetSearch(searchParams, page);
 
+    //Detect is user scroll to bottom, if so, trigger fetch
     const detectFetch = () => {
         if (scrollEl.current.offsetHeight + scrollEl.current.scrollTop >= scrollEl.current.scrollHeight) {
             setIsTriggered(true);
         }
     }
+
+    //When the ComponentDidMounted + 1s, set isLoading to false
     useEffect(() => {
         setTimeout(() => {
             setIsLoading(false);
         }, 1000)
     }, [])
 
+    //Add event listener when finish loading
     useEffect(() => {
         if (scrollEl.current) {
             scrollEl.current.addEventListener('scroll', detectFetch);
         };
     }, [isLoading]);
 
-    //reset page when new search happened
+    //Reset page when new search happens
     useEffect(() => {
         setPage(1);
         setIsTriggered(false);
     }, [searchParams])
 
     useEffect(() => {
+        //Trigger next fetch
         if (isTriggered && !dataEnd && !fetching) {
             setPage(page + 1);
         }
+        //Prevent continuous triggering
         if (isTriggered) {
             setTimeout(() => {
                 setIsTriggered(false);
             }, 500)
         }
-
     }, [isTriggered])
 
+    //Error handling
     if (error) {
         if (error.status === 403) {
             return <Error403 />
@@ -141,13 +147,16 @@ const Search = () => {
     }
     return (
         <>
+            {/* When loading, show Loading components*/}
             {isLoading ? <Loading /> :
                 <StyledDiv className="search" ref={scrollEl}>
+                    {/* Check is searchResult has been loaded */}
                     {searchResult ?
                         <div className="results">
                             <div className="results-title">
                                 關鍵字： {searchParams.get('keyword')} 的搜尋結果
                             </div>
+                            {/* Check if searchResult is empty */}
                             {searchResult.length !== 0 || fetching ? searchResult.map(r =>
                                 <Link className="result" to={"/users/" + r.login + "/repos"} key={r.id}>
                                     <img className="result-img" src={r.avatar_url} alt='' />
@@ -158,6 +167,7 @@ const Search = () => {
                                 <div className="result-name result-none">什麼都沒找到！</div>
                                 <div className="result-name result-none">換換關鍵字吧</div>
                             </div>}
+                            {/* Show Loading when fetching data */}
                             <Loading hide={!fetching || dataEnd} />
                         </div> : ''}
                 </StyledDiv>}

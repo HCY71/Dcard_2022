@@ -1,3 +1,4 @@
+//Manage theme
 const theme ={
     default:{
         background: '#13141c',

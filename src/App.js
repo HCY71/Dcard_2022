@@ -16,8 +16,8 @@ import Loading from './pages/LoadingPage';
 
 import styled, { ThemeProvider } from 'styled-components';
 import theme from './css/theme'
-import Error_403 from './components/Error403';
 
+//Styling
 const StyledDiv = styled.div`
   background-color: ${props => props.theme.background};
   width: 100vw;
@@ -34,9 +34,13 @@ const StyledDiv = styled.div`
 function App() {
   const [isDarkTheme, setIsDarkTheme] = useState(true);
   const [isPageLoading, setIsPageLoading] = useState(true);
+
+  //Handle theme changes
   const handleTheme = () => {
     setIsDarkTheme(!isDarkTheme);
   }
+  
+  //Check loading state
   useEffect(() => {
     if (document.readyState === 'interactive') {
       setTimeout(() => {
@@ -45,9 +49,12 @@ function App() {
     };
   })
   return (
+    // Set theme
     <ThemeProvider theme={isDarkTheme ? theme.default : theme.light}>
+      {/* Set Router */}
       <Router>
         <StyledDiv className="App">
+          {/* Show Loading when is loading */}
           {isPageLoading ?
             <Loading /> :
             ''
@@ -58,6 +65,7 @@ function App() {
             <Route path="/users/:username/repos" element={<Repos />}/>
             <Route path="/users/:username/repos/:repo" element={<Repo />}/>
             <Route path="/search" element={<Search />}/>
+            {/* Catch Not Found error */}
             <Route path="/*" element={<NotFound />}/>
           </Routes>
         </StyledDiv>

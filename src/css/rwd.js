@@ -1,3 +1,4 @@
+//Manage RWD breakpoints
 const RWD = {
     sm: '@media screen and (min-width: 576px)',
     md: '@media screen and (min-width: 768px)',

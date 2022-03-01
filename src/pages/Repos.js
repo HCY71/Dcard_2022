@@ -12,6 +12,7 @@ import Global from '../css/global';
 
 import { useGetRepos, useGetUser } from '../api/get'
 
+//Styling
 const StyledDiv = styled.div`
     background-color: ${props => props.theme.front};
     margin: 10px;
@@ -221,13 +222,14 @@ const Repos = () => {
     const { user, errorUser } = useGetUser(username);
     const { fetching, error, repos, dataEnd } = useGetRepos(username, page);
 
-
+    //Detect is user scroll to bottom, if so, trigger fetch
     const detectFetch = () => {
         if (scrollEl.current.offsetHeight + scrollEl.current.scrollTop >= scrollEl.current.scrollHeight) {
             setIsTriggered(true);
         }
     }
 
+    //When the ComponentDidMounted + 1s, set isLoading to false
     useEffect(() => {
         setPage(1);
         setTimeout(() => {
@@ -235,6 +237,7 @@ const Repos = () => {
         }, 1000)
     }, [])
 
+    //Add event listener when finish loading
     useEffect(() => {
         if (scrollEl.current) {
             scrollEl.current.addEventListener('scroll', detectFetch);
@@ -242,9 +245,12 @@ const Repos = () => {
     }, [isLoading]);
 
     useEffect(() => {
+        //Trigger next fetch, and prevent another fetch when dataEnd
         if (isTriggered && !dataEnd && !fetching) {
             setPage(page + 1);
         }
+
+        //Prevent continuous triggering
         if (isTriggered) {
             setTimeout(() => {
                 setIsTriggered(false);
@@ -252,6 +258,7 @@ const Repos = () => {
         }
     }, [isTriggered])
 
+    //Error handling
     if (error || errorUser) {
         if (errorUser && errorUser.status === 403) {
             return <Error403 />
@@ -272,8 +279,10 @@ const Repos = () => {
     }
     return (
         <>
+            {/* When loading, show Loading components*/}
             {isLoading ? <Loading /> :
                 user ?
+                    // Check is user has been loaded
                     <StyledDiv className="repos-page" ref={scrollEl}>
                         <div className="header">
                             <img src={user.avatar_url} alt="" className="header-img" />
@@ -286,6 +295,7 @@ const Repos = () => {
                             <hr />
                         </div>
                         <div className="repos" >
+                            {/* Check is there is repo */}
                             {repos.length === 0 && !fetching ?
                                 <div className="repos-item no-repo">
                                     No Repo available here!
@@ -305,6 +315,7 @@ const Repos = () => {
                                     </Link>
                                 )}
                         </div>
+                        {/* Show Loading when fetching data */}
                         <Loading hide={!fetching || dataEnd} />
                     </StyledDiv>
                     : ''

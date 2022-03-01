@@ -7,7 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import RWD from '../css/rwd';
 import Global from '../css/global';
 
-
+//Styling
 const StyledDiv = styled.div`
     background-color: ${props => props.theme.background};
     width: 100%;
@@ -60,7 +60,7 @@ const StyledDiv = styled.div`
         border-left: solid ${props => props.theme.border} 2px;
         border-radius: 2px;
         .link-logo{
-            ${props=>props.theme.isDark? 'filter: invert(1);':''}
+            ${props => props.theme.isDark ? 'filter: invert(1);' : ''}
             width: 30px;
         }
     }
@@ -108,7 +108,7 @@ const StyledDiv = styled.div`
     }
 `
 
-const Navbar = ({handleTheme}) => {
+const Navbar = ({ handleTheme }) => {
 
     const [keyword, setKeyword] = useState('');
 
@@ -116,13 +116,16 @@ const Navbar = ({handleTheme}) => {
 
     const handleSearch = async (keyword) => {
         if (keyword) {
+            //Handle search page jump
             navigate({ pathname: "/search", search: "?keyword=" + keyword });
             setKeyword('');
         } else {
+             //Handle no keyword
             alert('請輸入關鍵字！');
         }
     }
 
+    //Handle search when enter is pressed
     const handleEnterPress = (e) => {
         if (e.key === 'Enter') {
             handleSearch(keyword);
@@ -146,7 +149,7 @@ const Navbar = ({handleTheme}) => {
                     <FontAwesomeIcon icon={faMoon} className="mode-icon" />
                 </div>
             </div>
-            <a className='link' href='https://github.com/HCY71/Dcard_2022' target='_blank' rel="noreferrer">
+            <a className='link' href='https://github.com/HCY71/RepoFinder' target='_blank' rel="noreferrer">
                 <img src={logo} alt="" className="link-logo" />
             </a>
         </StyledDiv>

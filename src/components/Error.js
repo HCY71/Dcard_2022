@@ -1,11 +1,12 @@
 import styled from 'styled-components'
 import { useState, useEffect } from 'react';
-import Loading from '../components/Loading';
-import Button from '../components/Button'
+import Loading from './Loading';
+import Button from './Button'
 import RWD from '../css/rwd'
 import Global from '../css/global'
 import { useNavigate } from "react-router-dom";
 
+//Styling
 const StyledDiv = styled.div`
     color: ${props => props.theme.main};
     border: solid 1px ${props => props.theme.border};
@@ -42,18 +43,22 @@ const Error = ({ code, msg1, msg2 = '' }) => {
     const [isLoading, setIsLoading] = useState(true);
     let navigate = useNavigate();
 
+    //When the ComponentDidMounted + 1s, set isLoading to false
     useEffect(() => {
-        setIsLoading(true);
         setTimeout(() => {
             setIsLoading(false);
         }, 1000);
     }, [])
 
+
     const handleGoBack = () => {
+        
+        //Go to the previous page
         navigate(-1);
     }
     return (
         <>
+            {/* When loading, show Loading components*/}
             {isLoading ? <Loading /> :
                 <StyledDiv className="error">
                     <div className="title">{code}</div>

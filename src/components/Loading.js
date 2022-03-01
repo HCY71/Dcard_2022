@@ -3,8 +3,9 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import styled from 'styled-components'
 import RWD from '../css/rwd'
 
+//Styling
 const StyledDiv = styled.div`
-    color: ${props=>props.theme.icon};  
+    color: ${props => props.theme.icon};  
     font-size: 20px;
     display: flex;
     justify-content: center;
@@ -22,12 +23,14 @@ const StyledDiv = styled.div`
         font-size: 30px;
     }
 `
-const Loading = ({hide = false}) => {
-    return ( 
-        <StyledDiv className={`container ${hide? 'hide': ''}`}>
-            <FontAwesomeIcon className="loading" icon={faSpinner} spin/>
+
+const Loading = ({ hide = false }) => {
+    return (
+        // Use class: hide to control visibility
+        <StyledDiv className={`container ${hide ? 'hide' : ''}`}>
+            <FontAwesomeIcon className="loading" icon={faSpinner} spin />
         </StyledDiv>
-     );
+    );
 }
- 
+
 export default Loading;
