@@ -29,26 +29,26 @@ Infinite Scroll is supported here, too.
 
 ### Error Handling
 
-* Wrong Page Route
+* Wrong Page Route\
 Return NotFound Page.
 
-* Not Authenticated
+* Not Authenticated\
 Return Error403 Page with instruction on the page.
 
-* User Not Found
+* User Not Found\
 Return Error with the status code(404) and details.
 
-* Search with Zero Result
+* Search with Zero Result\
 Show details.
 
-* Other
+* Others\
 Return Error with the status code and the error message.
 
 ## Getting Started
 
 Follow the following steps to build up the necessary environment and run the app.
 
-### add *Your Github Token*
+### Add *Your Github Token*
 
 **Note: If not doing so, you may encounter a `403` error.**
 
