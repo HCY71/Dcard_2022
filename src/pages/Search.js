@@ -28,6 +28,7 @@ const StyledDiv = styled(motion.div)`
         .results-title{
             font-size: 20px;
             padding: 20px;
+            text-align: center;
             color: ${props => props.theme.main};
         }
         .result{
