@@ -27,6 +27,10 @@ Type into the search field, press `enter` / click on search icon to search.
 
 Infinite Scroll is supported here, too.
 
+### Loading & Page Transition Animation
+
+Animation applied on each page and loading process.
+
 ### Error Handling
 
 * Wrong Page Route\

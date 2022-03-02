@@ -3,9 +3,11 @@ import styled from "styled-components";
 import RWD from '../css/rwd';
 import Global from '../css/global';
 import Loading from "./Loading";
+import { motion } from "framer-motion";
+import variants from "../motion/variants";
 
 //Styling
-const StyledDiv = styled.div`
+const StyledDiv = styled(motion.div)`
     color: ${props => props.theme.main};
     width: 90vw;
     border: solid 1px ${props => props.theme.border};
@@ -48,7 +50,8 @@ const Error_403 = () => {
         <>
             {/* When loading, show Loading components*/}
             {isLoading ? <Loading /> :
-                <StyledDiv className="error-403">
+                // Adding animation on page
+                <StyledDiv className="error-403" variants={variants.pageVariants} initial="initial" animate="animate" exit="exit">
                     <div className="title">403</div>
                     <div className="subtitle">Unauthenticated clients can make 60 requests per hour.</div>
                     <a href="https://docs.github.com/en/rest/guides/getting-started-with-the-rest-api#authentication" target="_blank" rel="noreferrer">See Github Doc</a>

@@ -11,9 +11,11 @@ import Error from '../components/Error';
 import Error403 from '../components/Error403';
 
 import { useGetRepo } from "../api/get";
+import { motion } from 'framer-motion'
+import variants from '../motion/variants';
 
 //Styling
-const StyledDiv = styled.div`
+const StyledDiv = styled(motion.div)`
     background-color: ${props => props.theme.front};
     margin: 10px;
     padding: 20px 10px;
@@ -122,8 +124,8 @@ const Repo = () => {
 
     //Error handling
     if (error) {
-        if(error.status === 403){
-            return <Error403/>
+        if (error.status === 403) {
+            return <Error403 />
         }
         return <Error code={error.status} msg1={"取得Repo資料時出錯了。"} msg2={error.data.message} />
     }
@@ -134,7 +136,8 @@ const Repo = () => {
             {isLoading ? <Loading /> :
                 // Check is data has been loaded
                 data ?
-                    <StyledDiv className="repo">
+                    // Adding animation on page
+                    <StyledDiv className="repo" variants={variants.pageVariants} initial="initial" animate="animate" exit="exit">
                         <div className="repo-name">
                             <Link to={'/users/' + username + '/repos'} className='repo-name-user'>
                                 {data.full_name.slice(0, data.full_name.indexOf('/')) + ' '}

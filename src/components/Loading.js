@@ -2,9 +2,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import styled from 'styled-components'
 import RWD from '../css/rwd'
+import { motion } from 'framer-motion'
+import variants from '../motion/variants'
+
 
 //Styling
-const StyledDiv = styled.div`
+const StyledDiv = styled(motion.div)`
     color: ${props => props.theme.icon};  
     font-size: 20px;
     display: flex;
@@ -27,7 +30,7 @@ const StyledDiv = styled.div`
 const Loading = ({ hide = false }) => {
     return (
         // Use class: hide to control visibility
-        <StyledDiv className={`container ${hide ? 'hide' : ''}`}>
+        <StyledDiv className={`container ${hide ? 'hide' : ''}`} variants={variants.loadingVariants} initial="initial" animate="animate">
             <FontAwesomeIcon className="loading" icon={faSpinner} spin />
         </StyledDiv>
     );

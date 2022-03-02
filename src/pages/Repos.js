@@ -11,9 +11,13 @@ import RWD from '../css/rwd';
 import Global from '../css/global';
 
 import { useGetRepos, useGetUser } from '../api/get'
+import { motion } from 'framer-motion'
+import variants from '../motion/variants';
+
+const MotionLink = motion(Link)
 
 //Styling
-const StyledDiv = styled.div`
+const StyledDiv = styled(motion.div)`
     background-color: ${props => props.theme.front};
     margin: 10px;
     padding: 10px;
@@ -235,6 +239,13 @@ const Repos = () => {
         setTimeout(() => {
             setIsLoading(false);
         }, 1000)
+
+        //cleanup
+        return ()=>{
+            setIsLoading(false);
+            setPage(1);
+            setIsTriggered(false);
+        }
     }, [])
 
     //Add event listener when finish loading
@@ -280,10 +291,11 @@ const Repos = () => {
     return (
         <>
             {/* When loading, show Loading components*/}
-            {isLoading ? <Loading /> :
+            {isLoading ? <Loading/> :
                 user ?
                     // Check is user has been loaded
-                    <StyledDiv className="repos-page" ref={scrollEl}>
+                    // Adding animation on page
+                    <StyledDiv className="repos-page" ref={scrollEl} variants={variants.pageVariants} initial="initial" animate="animate" exit="exit">
                         <div className="header">
                             <img src={user.avatar_url} alt="" className="header-img" />
                             <div className="header-name">{user.name ? user.name : user.login}</div>
@@ -297,11 +309,12 @@ const Repos = () => {
                         <div className="repos" >
                             {/* Check is there is repo */}
                             {repos.length === 0 && !fetching ?
-                                <div className="repos-item no-repo">
-                                    No Repo available here!
-                                </div>
+                                    <motion.div className="repos-item no-repo" variants={variants.reposVariants}>
+                                        No Repo available here!
+                                    </motion.div>
                                 : repos.map(r =>
-                                    <Link to={r.name} className="repos-item" key={r.id}>
+                                    // Adding animation on each repo 
+                                    <MotionLink to={r.name} className="repos-item" key={r.id} variants={variants.reposVariants}>
                                         <div to={r.name} className="repos-item-link">
                                             {r.name}
                                         </div>
@@ -312,7 +325,7 @@ const Repos = () => {
                                             <FontAwesomeIcon icon={faStar} className="repos-item-star-icon"></FontAwesomeIcon>
                                             {r.stargazers_count}
                                         </div>
-                                    </Link>
+                                    </MotionLink>
                                 )}
                         </div>
                         {/* Show Loading when fetching data */}

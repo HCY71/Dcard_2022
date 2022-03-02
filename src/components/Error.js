@@ -5,9 +5,11 @@ import Button from './Button'
 import RWD from '../css/rwd'
 import Global from '../css/global'
 import { useNavigate } from "react-router-dom";
+import { motion } from 'framer-motion';
+import variants from '../motion/variants';
 
 //Styling
-const StyledDiv = styled.div`
+const StyledDiv = styled(motion.div)`
     color: ${props => props.theme.main};
     border: solid 1px ${props => props.theme.border};
     border-radius: 10px;
@@ -52,7 +54,7 @@ const Error = ({ code, msg1, msg2 = '' }) => {
 
 
     const handleGoBack = () => {
-        
+
         //Go to the previous page
         navigate(-1);
     }
@@ -60,11 +62,12 @@ const Error = ({ code, msg1, msg2 = '' }) => {
         <>
             {/* When loading, show Loading components*/}
             {isLoading ? <Loading /> :
-                <StyledDiv className="error">
+                // Adding animation on page
+                <StyledDiv className="error" variants={variants.pageVariants} initial="initial" animate="animate" exit="exit">
                     <div className="title">{code}</div>
                     <div className="subtitle">{msg1}</div>
                     <div className="subtitle">{msg2}</div>
-                    <StyledButton text={'Go Back'} onClick={handleGoBack}/>
+                    <StyledButton text={'Go Back'} onClick={handleGoBack} />
                 </StyledDiv>
             }
         </>

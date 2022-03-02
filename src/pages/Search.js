@@ -8,9 +8,13 @@ import Error from '../components/Error';
 import Error403 from '../components/Error403';
 
 import { useGetSearch } from '../api/get';
+import { motion } from 'framer-motion'
+import variants from '../motion/variants';
+
+const MotionLink = motion(Link)
 
 //Styling
-const StyledDiv = styled.div`
+const StyledDiv = styled(motion.div)`
     width: 100%;
     padding: 30px 10px;
     height: 100%;
@@ -110,6 +114,13 @@ const Search = () => {
         setTimeout(() => {
             setIsLoading(false);
         }, 1000)
+
+        //cleanup
+        return ()=>{
+            setIsLoading(false);
+            setPage(1);
+            setIsTriggered(false);
+        }
     }, [])
 
     //Add event listener when finish loading
@@ -149,7 +160,8 @@ const Search = () => {
         <>
             {/* When loading, show Loading components*/}
             {isLoading ? <Loading /> :
-                <StyledDiv className="search" ref={scrollEl}>
+                // Adding animation on page
+                <StyledDiv className="search" ref={scrollEl} variants={variants.pageVariants} initial="initial" animate="animate" exit="exit">
                     {/* Check is searchResult has been loaded */}
                     {searchResult ?
                         <div className="results">
@@ -157,16 +169,17 @@ const Search = () => {
                                 關鍵字： {searchParams.get('keyword')} 的搜尋結果
                             </div>
                             {/* Check if searchResult is empty */}
+                            {/* Adding animation on each result */}
                             {searchResult.length !== 0 || fetching ? searchResult.map(r =>
-                                <Link className="result" to={"/users/" + r.login + "/repos"} key={r.id}>
+                                <MotionLink className="result" to={"/users/" + r.login + "/repos"} key={r.id} variants={variants.reposVariants}>
                                     <img className="result-img" src={r.avatar_url} alt='' />
                                     <div className="result-name">{r.login}</div>
                                     <div className="result-type">{r.type}</div>
-                                </Link>
-                            ) : <div className="result">
+                                </MotionLink>
+                            ) : <motion.div className="result" variants={variants.reposVariants}>
                                 <div className="result-name result-none">什麼都沒找到！</div>
                                 <div className="result-name result-none">換換關鍵字吧</div>
-                            </div>}
+                            </motion.div>}
                             {/* Show Loading when fetching data */}
                             <Loading hide={!fetching || dataEnd} />
                         </div> : ''}
