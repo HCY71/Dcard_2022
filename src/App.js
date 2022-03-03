@@ -27,6 +27,7 @@ const StyledDiv = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
   a{
     text-decoration: none;
     color: ${props => props.theme.link}

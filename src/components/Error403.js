@@ -16,9 +16,11 @@ const StyledDiv = styled(motion.div)`
     margin-top: 30px;
     display: grid;
     grid-row-gap: 10px;
+    text-align: left;
     .title{
         font-size: 60px;
         font-weight: bold;
+        text-align: center;
     }
     .subtitle{
         font-size: 20px;
@@ -56,7 +58,7 @@ const Error_403 = () => {
                     <div className="subtitle">Unauthenticated clients can make 60 requests per hour.</div>
                     <a href="https://docs.github.com/en/rest/guides/getting-started-with-the-rest-api#authentication" target="_blank" rel="noreferrer">See Github Doc</a>
                     <div className="des">You need to add your GitHub Token as .env file to continue!</div>
-                    <a href="https://github.com/HCY71/RepoFinder#getting-started-with-create-react-app" target="_blank" rel="noreferrer">See README</a>
+                    <a href="https://github.com/HCY71/RepoFinder#add-your-github-token" target="_blank" rel="noreferrer">See README</a>
                 </StyledDiv>
             }
         </>
