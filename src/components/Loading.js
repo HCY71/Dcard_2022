@@ -18,7 +18,9 @@ const StyledDiv = styled(motion.div)`
     opacity: 1;
     transform: scale(1);
     transition: .5s;
+    transition-delay: 0s;
     &.hide{
+        transition-delay: .6s;
         opacity: 0;
         transform: scale(0);
     }

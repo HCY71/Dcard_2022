@@ -47,11 +47,14 @@ function App() {
 
   //Check loading state
   useEffect(() => {
-    if (document.readyState === 'interactive') {
-      setTimeout(() => {
-        setIsPageLoading(false);
-      }, 1500);
-    };
+    let LoadChecker = setInterval(()=>{
+      if (document.readyState === 'interactive' || document.readyState === 'complete') {
+        clearInterval(LoadChecker);
+        setTimeout(() => {
+          setIsPageLoading(false);
+        }, 1500);
+      };
+    }, 10)
   })
   return (
     // Set theme

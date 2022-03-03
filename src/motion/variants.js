@@ -19,11 +19,15 @@ const variants = {
     reposVariants: {
         'initial': {
             opacity: 0,
-            scale: 0
+            scale: 0,
         },
         'animate': {
             opacity: 1,
             scale: 1,
+            transition: {
+                delay: .5
+            }
+            
         }
     },
     backgroundVariants:{
@@ -40,7 +44,7 @@ const variants = {
             transition: {
                 duration: .1
             }
-        }
+        },
     }
 }
 
