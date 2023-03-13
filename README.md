@@ -52,7 +52,7 @@ Return Error with the status code and the error message.
 
 This project has deployed on Github Page.
 
-[Link](https://hcy71.github.io/RepoFinder)
+[Link](https://hcy71.github.io/repo-finder)
 
 ## Getting Started
 
